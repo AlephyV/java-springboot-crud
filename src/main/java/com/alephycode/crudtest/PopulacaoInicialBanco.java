@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 @Transactional
@@ -20,6 +22,9 @@ public class PopulacaoInicialBanco implements CommandLineRunner {
 
     @Autowired
     private DepartamentoRepository departamentoRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -53,6 +58,17 @@ public class PopulacaoInicialBanco implements CommandLineRunner {
 
         pessoaRepository.save(p1);
         pessoaRepository.save(p2);
+
+        Endereco e1 = new Endereco("Rua da hora", "12");
+        e1.setPessoa(p1);
+        Endereco e2 = new Endereco("Rua Recife", "111");
+        e2.setPessoa(p1);
+        Endereco e3 = new Endereco("Rua paraiso", "55");
+        e3.setPessoa(p2);
+
+        enderecoRepository.save(e1);
+        enderecoRepository.save(e2);
+        enderecoRepository.save(e3);
 
     }
 }

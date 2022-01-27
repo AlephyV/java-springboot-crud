@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,6 +35,13 @@ public class Pessoa {
     @ManyToOne
     private Departamento departamento;
 
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = "pessoa"
+    )
+    private List<Endereco> enderecos;
+
     @Deprecated
     protected Pessoa() {}
 
@@ -59,6 +67,14 @@ public class Pessoa {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public List<Endereco> getEnderecos() {
+        return enderecos;
+    }
+
+    public void setEnderecos(List<Endereco> enderecos) {
+        this.enderecos = enderecos;
     }
 
     public Cidade getCidade() {
