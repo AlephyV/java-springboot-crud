@@ -16,7 +16,6 @@
             <th>Nome</th>
             <th>Telefone</th>
             <th>Email</th>
-            <th>Departamento</th>
             <th>Ações</th>
         </tr>
         </thead>
@@ -25,6 +24,11 @@
             <td th:text="${pessoa.nome}"></td>
             <td th:text="${pessoa.telefone}"></td>
             <td th:text="${pessoa.email}"></td>
+            <td>
+                <a th:href="@{/pessoas/{id}(id=${pessoa.id})}" class="btn btn-primary">Alterar</a>
+                <a th:href="@{/pessoas/excluir/{id}(id=${pessoa.id})}" class="btn btn-danger">Excluir</a>
+            </td>
+
         </tr>
         </tbody>
     </table>

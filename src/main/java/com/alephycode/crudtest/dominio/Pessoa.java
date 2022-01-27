@@ -16,7 +16,7 @@ public class Pessoa {
     private long id;
     private String nome;
 
-    @DateTimeFormat(style = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
     private String cpf;
     private String email;
