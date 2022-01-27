@@ -1,11 +1,14 @@
 package com.alephycode.crudtest.dominio;
 
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -14,11 +17,17 @@ public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @NotBlank(message = "Nome não pode ser vazio")
     private String nome;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
+
+    @CPF
     private String cpf;
+
+    @Email
     private String email;
     private String telefone;
 
