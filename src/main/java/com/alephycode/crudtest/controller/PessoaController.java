@@ -1,25 +1,31 @@
 package com.alephycode.crudtest.controller;
 
-import com.alephycode.crudtest.dominio.Pessoa;
-import com.alephycode.crudtest.dominio.PessoaRepository;
+import com.alephycode.crudtest.Dto.AutoCompleteDTO;
+import com.alephycode.crudtest.dominio.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
 public class PessoaController {
 
     private PessoaRepository pessoaRepository;
+    private CidadeRepository cidadeRepository;
+    private DepartamentoRepository departamentoRepository;
 
-    public PessoaController(PessoaRepository pessoaRepository) {
+    private List<Departamento> departamentosSugeridos = new ArrayList<>();
+
+    public PessoaController(PessoaRepository pessoaRepository, CidadeRepository cidadeRepository, DepartamentoRepository departamentoRepository) {
         this.pessoaRepository = pessoaRepository;
+        this.cidadeRepository = cidadeRepository;
+        this.departamentoRepository = departamentoRepository;
     }
 
     @GetMapping("/pessoas")
@@ -29,13 +35,16 @@ public class PessoaController {
     }
 
     @GetMapping("/pessoas/nova")
-    public String novaPessoa(@ModelAttribute("pessoa") Pessoa pessoa) {
+    public String novaPessoa(Model model) {
+        model.addAttribute("pessoa", new Pessoa(""));
+        model.addAttribute("cidades", cidadeRepository.findAll());
         return "pessoas/form";
     }
 
     @PostMapping("pessoas/salvar")
-    public String salverPessoa(@Valid @ModelAttribute("pessoa") Pessoa pessoa, BindingResult bindingResult) {
+    public String salverPessoa(@Valid @ModelAttribute("pessoa") Pessoa pessoa, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
+            model.addAttribute("cidades", cidadeRepository.findAll());
             return "/pessoas/form";
         }
         pessoaRepository.save(pessoa);
@@ -50,6 +59,7 @@ public class PessoaController {
         }
 
         model.addAttribute("pessoa", pessoa.get());
+        model.addAttribute("cidades", cidadeRepository.findAll());
 
         return "pessoas/form";
     }
@@ -65,5 +75,27 @@ public class PessoaController {
 
         return "redirect:/pessoas";
     }
+
+    @RequestMapping("pessoas/departamentosNomeAutoComplete")
+    @ResponseBody
+    public List<AutoCompleteDTO> departamentosNomeAutoComplete(@RequestParam("term") String term) {
+        List<AutoCompleteDTO> sugestoes = new ArrayList<>();
+        try {
+            if(term.length() >= 3) {
+                departamentosSugeridos = departamentoRepository.searchByNome(term);
+            }
+
+            for(Departamento d : departamentosSugeridos) {
+                if(d.getNome().toLowerCase().contains(term.toLowerCase())) {
+                    AutoCompleteDTO dto = new AutoCompleteDTO(d.getNome(), Long.toString(d.getId()));
+                    sugestoes.add(dto);
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return sugestoes;
+    }
+
 
 }

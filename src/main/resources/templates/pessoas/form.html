@@ -4,6 +4,21 @@
     <meta charset="UTF-8" />
     <title>Sistema de Gestão de Pessoas</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#nomeDepartamento").autocomplete({
+                source: "departamentosNomeAutoComplete",
+                minLength: 3,
+                select: function(event, ui) {
+                    this.value = ui.item.label;
+                    $("#idDepartamento").val(ui.item.value);
+                    return false;
+                }
+            })
+        })
+    </script>
 </head>
 <body>
     <div class="container my-2">
@@ -22,6 +37,12 @@
                 <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></span>
                 <input type="text" th:field="*{email}" placeholder="Email" class="form-control mb-4 col-4">
                 <input type="text" th:field="*{telefone}" placeholder="Telefone" class="form-control mb-4 col-4">
+                <select th:field="*{cidade}" class="form-control mb-4 col-4">
+                    <option th:each="cidade : ${cidades}" th:value="${cidade.id}" th:text="${cidade.nome} + '(' + ${cidade.uf} + ')'"></option>
+                </select>
+                <span th:if="${#fields.hasErrors('departamento')}" th:errors="*{departamento}" class="text-danger"></span>
+                <input id="nomeDepartamento" type="text" th:field="*{nomeDepartamento}" placeholder="Departamento" class="form-control mb-4 col-4"/>
+                <input id="idDepartamento" type="hidden" th:field="*{departamento}" class="form-control mb-4 col-4">
 
                 <button type="submit" class="btn btn-info col-2">Salvar</button>
             </div>

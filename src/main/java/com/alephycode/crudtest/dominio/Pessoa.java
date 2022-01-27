@@ -3,10 +3,7 @@ package com.alephycode.crudtest.dominio;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
@@ -30,6 +27,12 @@ public class Pessoa {
     @Email
     private String email;
     private String telefone;
+
+    @ManyToOne(optional = false)
+    private Cidade cidade;
+
+    @ManyToOne
+    private Departamento departamento;
 
     @Deprecated
     protected Pessoa() {}
@@ -56,6 +59,22 @@ public class Pessoa {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Cidade getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 
     public long getId() {
@@ -104,5 +123,12 @@ public class Pessoa {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getNomeDepartamento() {
+        if(departamento != null) {
+            return departamento.getNome();
+        }
+        return "";
     }
 }
